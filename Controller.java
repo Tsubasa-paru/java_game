@@ -37,6 +37,7 @@ void update(int s) {                              //PlanePanelのactionPerformed
         ey = y+size/2;
         kakudo = Math.atan(-1*(float)vy/(float)vx); //速度から角度を変更
         if(vx<0) {kakudo = PI + kakudo; }
+	
 }
 
 void updatev(int a,int b){                        //(2:移動方向選択モード)でクリックした座標に向かうように速度を変更する関数
@@ -56,6 +57,12 @@ int getY(){
 int getsize(){
         return size;
 }
+    public void setX(int s){
+	this.x=s;
+    }
+    public void setY(int s){
+	this.y=s;
+    }
 boolean getflag(){
         return flag;
 }
@@ -149,6 +156,7 @@ PlanePanel(int s){                   //sに以下、Airfieldのサイズを渡�
 }
 	
 //..................↑コンストラクタ.........................//
+  
 
     
     //..........↓マウスクリック時の操作..............//
@@ -188,6 +196,7 @@ public void mouseReleased(MouseEvent e){
 public void mouseEntered(MouseEvent e){
 }
 public void mouseExited(MouseEvent e){
+   
 }
 public void mousePressed(MouseEvent e){
 }
@@ -195,11 +204,29 @@ public void mouseClicked(MouseEvent e){
 }
 public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for(Airplane f: plane) {
-                f.draw(g);
-        }
+	for(Airplane f: plane){
+	    f.draw(g);
+    }
+	//plane.forEach(i -> label.setText(String.valueOf(i)));
+	
+	/* for(Airplane f:plane){
+	    for(Airplane e:plane){
+		double x1 = f.getX();
+		    double x2 = e.getX();
+		    double y1 = f.getY();
+		    double y2 =e.getY();
+		double dist = Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+		label.setText(String.valueOf(dist));
+		if(dist<size*2){
+		    f.changeflag();
+		    e.changeflag();
+		}
+	    }
+	    }*/
+		
 }
 public void actionPerformed(ActionEvent e){
+    
         for(Airplane f: plane) {
                 f.update(size);
         }
@@ -212,85 +239,93 @@ public void actionPerformed(ActionEvent e){
 
 
 class Airfield extends JFrame {
-private int size;                                           //画面のサイズ
-public Airfield(){
-        size = 400;
+    private int size;                                           //画面のサイズ
+    public Airfield(){
+	size = 400;
         this.setTitle("Random Frame");
         this.setSize(size,size);
         this.add(new PlanePanel(size));                    //RandomPnelをAirfieldに追加
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-}
-public static void main(String argv[]) {
+    }
+    public static void main(String argv[]) {
         new Airfield();
-}
+    }
 }
 
-class Collision{//到着判定
-private int x, y, width, height;
+class Collision extends Airplane{//到着判定
+    private int x, y, width, height;
     private Image image;
     private Airfield panel;
     private static final Point Strage = new Point(-20,-20);
-private boolean coll;
-private ArrayList<Airplane> plane;
-
+    private boolean coll;
+    private int NUM =2;
+    
     public Collision(Airfield field){
 	x = Strage.x;
 	y = Strage.y;
 	this.panel=panel;
 	loadImage();
     }
-
-public Point getPos(){
-  return new Point(x,y);
-}
-
+    
+    public Point getPos(){
+	return new Point(x,y);
+    }
+    
     public void setPos(int x, int y){
 	this.x=x;
 	this.y=y;
     }
-
-public int getHeight(){
-  return height;
-}
-
-public int getWidth(){
-  return width;
-}
-
+    
+    public int getHeight(){
+	return height;
+    }
+    
+    public int getWidth(){
+	return width;
+    }
+    
     public void store(){
 	x=Strage.x;
 	y=Strage.y;
     }
-
+    
     public boolean InStrage(){
 	if(x==Strage.x && y==Strage.x)
 	    return true;
 	return false;
     }
-
+    
     public void draw(Graphics g){
 	g.drawImage(image,x,y,null);
     }
-
-      private void loadImage() {
+    
+    private void loadImage() {
         ImageIcon icon = new ImageIcon(getClass().getResource("a.png"));
         image = icon.getImage();
-
         width = image.getWidth(panel);
         height = image.getHeight(panel);
     }
-
-
+    
+    
     public boolean getPlane(Collision plane){
         Rectangle rectplane1 = new Rectangle(x,y,width,height);
         Point pos = plane.getPos();
         Rectangle rectplane2 = new Rectangle(pos.x,pos.y,plane.getWidth(),plane.getHeight());
         return rectplane1.intersects(rectplane2);
-}
+    }
     public void restore(){
 	setPos(Strage.x,Strage.y);
     }
-
-    
+    /*  private void CollisionDecision(){
+	ImageIcon[] p = {i1,i2};
+	for(int i=0;i<NUM;i++){
+	    for(int j=i+1;j<NUM;j++){
+		if(p[i].getPlane(p[j])){
+		    p[i].restore();
+		    p[j].restore();
+		}
+	    }
+	}
+	}*/
 }
