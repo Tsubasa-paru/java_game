@@ -6,6 +6,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import static java.lang.Math.*;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import javax.swing.ImageIcon;
 
 //.....↓Airplaneクラス(飛行機が持つの性質) ......//
 class Airplane {
@@ -122,6 +126,7 @@ private ArrayList<Airplane> plane;    //全飛行機を格納するArrayList
 private JLabel label;                 //クリック座標を表示するJLabel
 private int clickmode;                //クリックモードを判断する変数 (1:飛行機選択モード 2:移動方向選択モード)
 private int size;                     //画面サイズ
+    private boolean coll;
 
 //..................↓コンストラクタ.........................//
 PlanePanel(int s){                   //sに以下、Airfieldのサイズを渡す
@@ -142,15 +147,16 @@ PlanePanel(int s){                   //sに以下、Airfieldのサイズを渡�
         timer = new Timer(100, this);               // 0.1秒毎にactionPerformedを呼び出し
         timer.start();                              // タイマーをスタート
 }
+	
 //..................↑コンストラクタ.........................//
 
-
-//..........↓マウスクリック時の操作..............//
+    
+    //..........↓マウスクリック時の操作..............//
 
 public void mouseReleased(MouseEvent e){
         Point point = e.getPoint();                   //クリック位置を取得
         label.setText("x:" + point.x + ",y:" + point.y); //ラベルにクリック位置を表示
-
+	
         if(clickmode==1) {//1:飛行機選択モード↓↓↓↓
                 for(Airplane f: plane) {
                         if( f.getX() < point.x &&  point.x < f.getX()+f.getsize() ) {
@@ -198,6 +204,7 @@ public void actionPerformed(ActionEvent e){
                 f.update(size);
         }
         this.repaint();
+	
 }
 }
 //..................↑PlanePanelクラス.........................//
@@ -219,35 +226,71 @@ public static void main(String argv[]) {
 }
 }
 
-class Collision extends Airplane{//到着判定
-private int px, py, width, height;
+class Collision{//到着判定
+private int x, y, width, height;
+    private Image image;
+    private Airfield panel;
+    private static final Point Strage = new Point(-20,-20);
 private boolean coll;
 private ArrayList<Airplane> plane;
 
-Point getPos(){
-  return new Point(px,py);
+    public Collision(Airfield field){
+	x = Strage.x;
+	y = Strage.y;
+	this.panel=panel;
+	loadImage();
+    }
+
+public Point getPos(){
+  return new Point(x,y);
 }
 
-int getHeight(){
+    public void setPos(int x, int y){
+	this.x=x;
+	this.y=y;
+    }
+
+public int getHeight(){
   return height;
 }
 
-int getWidth(){
+public int getWidth(){
   return width;
 }
 
-boolean getPlane(){
-    plane = new ArrayList<Airplane>();
-    for(int i=0; i<5; i++) {
-            plane.add(new B());
-            plane.add(new A());
+    public void store(){
+	x=Strage.x;
+	y=Strage.y;
     }
-        Rectangle rectplane = new Rectangle(px,py,width,height);
-        Point pos = new getPos();
-        Rectangle rectair = new Rectangle(pos.plane,pos.plane,plane.getWidth(),plane.getHeight());
-        return rectplane.intersects(rectair);
+
+    public boolean InStrage(){
+	if(x==Strage.x && y==Strage.x)
+	    return true;
+	return false;
+    }
+
+    public void draw(Graphics g){
+	g.drawImage(image,x,y,null);
+    }
+
+      private void loadImage() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("a.png"));
+        image = icon.getImage();
+
+        width = image.getWidth(panel);
+        height = image.getHeight(panel);
+    }
+
+
+    public boolean getPlane(Collision plane){
+        Rectangle rectplane1 = new Rectangle(x,y,width,height);
+        Point pos = plane.getPos();
+        Rectangle rectplane2 = new Rectangle(pos.x,pos.y,plane.getWidth(),plane.getHeight());
+        return rectplane1.intersects(rectplane2);
 }
-void print(){
-  System.out.println(getPlane());
-}
+    public void restore(){
+	setPos(Strage.x,Strage.y);
+    }
+
+    
 }
