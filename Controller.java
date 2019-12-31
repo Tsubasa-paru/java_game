@@ -333,9 +333,11 @@ void updatec(Airplane g){
 
   double dist = Math.sqrt(Math.pow(ex-x2-size2/2,2)+Math.pow(ey-y2-size2/2,2));
   if(dist != 0){
-  if(dist<size/2+size2/2){
+  if(dist<size+size2){
       changecoll();
-    }
+    }//else if(dist<size/2+size2/2){
+
+    //}
   }
   }
 
@@ -516,7 +518,7 @@ boolean coll;
                 f.update(size);
                   for(Airplane g:plane){
                   f.updatec(g);
-                  coll = f.getcoll();
+                  coll = g.getcoll();
                   if(coll){
                     label.setText("warning");
                     //f.endgame();
