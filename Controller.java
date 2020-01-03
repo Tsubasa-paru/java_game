@@ -287,13 +287,16 @@ protected int x,y,vx,vy,ex,ey,size;               //ex,eyは画像の中心座�
 protected double kakudo;                          //進行方向に傾けるための角度
 protected boolean flag;                           //クリックモード1で選択されたかを判定する変数
 protected boolean coll;
+protected boolean add;
+protected boolean bcoll;
 private ArrayList<Airplane> plane;
+//protected int block[][];
 //private JLabel label;
 Airplane() {
-        x = (int)(Math.random()*300);                                   //初期座標と初期速度を設定
-        y = (int)(Math.random()*300);
-        vx = (int)(Math.random()*5);
-        vy = (int)(Math.random()*5);
+        x = 0;                                   //初期座標と初期速度を設定
+        y = 0;
+        vx = 0;
+        vy = 0;
         kakudo = Math.atan(-1*(float)vy/(float)vx); //最初の進行方向に応じた角度を設定
         if(vx<0) {kakudo = PI + kakudo; }
         size=(int)(Math.random()*30+40);          //大きさもランダム
@@ -319,14 +322,24 @@ void updatev(int a,int b){                        //(2:移動方向選択モー�
         if(vx<0) {kakudo = PI + kakudo; }
 }
 
-void endgame(){
-/*  vx = 0;
-  vy = 0;
-  x = 10;
-  y = 10; */
+void addplane(){
+  x = (int)(Math.random()*400);                                   //初期座標と初期速度を設定
+  y = (int)(Math.random()*400);
+  vx = (int)(Math.random()*5);
+  vy = (int)(Math.random()*5);
+  kakudo = Math.atan(-1*(float)vy/(float)vx);
+  add = true;
 }
 
-void updatec(Airplane g){
+void removeplane(){
+  vx = 0;
+  vy = 0;
+  x = 90;
+  y = 30;
+ changeadd();
+}
+
+void updatewarn(Airplane g){
       int x2 = g.getX();
       int y2 = g.getY();
       int size2 = g.getsize();
@@ -334,11 +347,50 @@ void updatec(Airplane g){
   double dist = Math.sqrt(Math.pow(ex-x2-size2/2,2)+Math.pow(ey-y2-size2/2,2));
   if(dist != 0){
   if(dist<size+size2){
+    if(coll==false){
       changecoll();
-    }//else if(dist<size/2+size2/2){
-
-    //}
+    }
+  }else{
+    resetcoll();
   }
+  }
+  }
+
+  void coll(Airplane g){
+    int b[][] = addblock();
+    for(int i=0; i<b.length; i++){
+    int bx = b[i][0];
+    int by = b[i][1];
+    int bsize = b[i][2];
+
+    double dist = Math.sqrt(Math.pow(ex-bx-bsize,2)+Math.pow(ey-by-bsize,2));
+    if(dist<size/2+bsize){
+      if(bcoll==false){
+        changebcoll();
+    }
+  }else{
+      resetbcoll();
+    }
+    }
+
+  }
+
+  //int[][] addblock(){
+  //  int block[][]={{200,100,20},{300,400,20}};
+  //  return block;
+  //}
+
+
+  boolean getbcoll(){
+    return bcoll;
+  }
+
+  void changebcoll(){
+   bcoll =! bcoll;
+  }
+
+  void resetbcoll(){
+    bcoll = false;
   }
 
   boolean getcoll(){
@@ -347,10 +399,17 @@ void updatec(Airplane g){
   void changecoll(){
     coll = !coll;
   }
-  /*void resetcoll(){
+  void resetcoll(){
     coll = false;
-  }*/
+  }
 
+  boolean getadd(){
+    return add;
+  }
+
+void changeadd(){
+  add =! add;
+}
 
 void draw(Graphics g) {
 }
@@ -437,6 +496,8 @@ private ArrayList<Airplane> plane;    //全飛行機を格納するArrayList
 private JLabel label;                 //クリック座標を表示するJLabel
 private int clickmode;                //クリックモードを判断する変数 (1:飛行機選択モード 2:移動方向選択モード)
 private int size;                     //画面サイズ
+private ArrayList<ArrayList<Block>> block;
+
 
 
 //..................↓コンストラクタ.........................//
@@ -446,6 +507,8 @@ PlanePanel(int s){                   //sに以下、Airfieldのサイズを渡�
                 plane.add(new B());
                 plane.add(new A());
         }
+        block = new ArrayList<Block>;
+        block={{200,100,20},{300,400,20}};
 
         size = s;                                   //画面の大きさを保存
         this.addMouseListener(this);                //マウスリスナーに登録
@@ -507,24 +570,54 @@ public void mouseClicked(MouseEvent e){
 }
 public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        //Airplane b = new Airplane();
+        //int block[][] = b.addblock();
+        g.fillOval(100,100,20,20);
+        for(int i=0;i<block[0].length;i++){
+          int bx = block[i][0];
+          int by =block[i][1];
+          int bsize = block[i][2];
+          g.fillOval(bx,by,bsize,bsize);
+        }
+        //g.fillRect(200,100,20,20);
+        //g.fillRect(300,400,20,20);
+        //int block[][];
+        //block = new int[2][3];
+        //int block[][]={{200,100,20},{300,400,20}};
 	for(Airplane f: plane){
 	    f.draw(g);
     }
 	//plane.forEach(i -> label.setText(String.valueOf(i)));
 }
+
+
 public void actionPerformed(ActionEvent e){
-boolean coll;
+boolean coll,bcoll;
+boolean add;
         for(Airplane f: plane) {
                 f.update(size);
+                add = f.getadd();
+                if(add==false){
+                double r = Math.random();
+                //if(r>0.2){
+                  f.addplane();
+                //}
+              }
                   for(Airplane g:plane){
-                  f.updatec(g);
+
+                  f.updatewarn(g);
+                  f.coll(g);
                   coll = g.getcoll();
-                  if(coll){
+                  bcoll = g.getbcoll();
+                  if(bcoll){
                     label.setText("warning");
+                //    g.removeplane();
                     //f.endgame();
                     //g.endgame();
+                  }else if(coll){
+                    label.setText("Failure");
                   }else{
-                    label.setText("");
+                    label.setText("noun");
                   }
                 }
         }
