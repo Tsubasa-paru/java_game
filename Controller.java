@@ -290,11 +290,13 @@ protected boolean coll;
 protected boolean add;
 protected boolean bcoll;
 private ArrayList<Airplane> plane;
+protected int ix=100;
+protected int iy=0;
 //protected int block[][];
 //private JLabel label;
 Airplane() {
-        x = 0;                                   //初期座標と初期速度を設定
-        y = 0;
+        x = ix;                                   //初期座標と初期速度を設定
+        y = iy;
         vx = 0;
         vy = 0;
         kakudo = Math.atan(-1*(float)vy/(float)vx); //最初の進行方向に応じた角度を設定
@@ -328,15 +330,21 @@ void addplane(){
   vx = (int)(Math.random()*5);
   vy = (int)(Math.random()*5);
   kakudo = Math.atan(-1*(float)vy/(float)vx);
-  add = true;
 }
 
-void removeplane(){
-  vx = 0;
+void storeplane(){
+  vx = 3;
   vy = 0;
-  x = 90;
-  y = 30;
- changeadd();
+  x = ix;
+  y = iy;
+}
+
+boolean store(){
+  if(y==iy){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 void updatewarn(Airplane g){
@@ -345,7 +353,7 @@ void updatewarn(Airplane g){
       int size2 = g.getsize();
 
   double dist = Math.sqrt(Math.pow(ex-x2-size2/2,2)+Math.pow(ey-y2-size2/2,2));
-  if(dist != 0){
+  if(x != x2){
   if(dist<size+size2){
     if(coll==false){
       changecoll();
@@ -356,9 +364,9 @@ void updatewarn(Airplane g){
   }
   }
 
-  void coll(Airplane g){
-    int b[][] = addblock();
-    for(int i=0; i<b.length; i++){
+  void coll(int b[][],int i){
+    //int b[][] = addblock();
+    //for(int i=0; i<b.length; i++){
     int bx = b[i][0];
     int by = b[i][1];
     int bsize = b[i][2];
@@ -371,15 +379,21 @@ void updatewarn(Airplane g){
   }else{
       resetbcoll();
     }
-    }
+  //}
 
   }
 
-  //int[][] addblock(){
-  //  int block[][]={{200,100,20},{300,400,20}};
-  //  return block;
-  //}
+  int[][] addblock(){
+    int block[][]={{200,100,20},{300,400,20}};
+    return block;
+  }
 
+int getIX(){
+  return ix;
+}
+int getIY(){
+  return iy;
+}
 
   boolean getbcoll(){
     return bcoll;
@@ -408,7 +422,7 @@ void updatewarn(Airplane g){
   }
 
 void changeadd(){
-  add =! add;
+  add = true;
 }
 
 void draw(Graphics g) {
@@ -496,7 +510,8 @@ private ArrayList<Airplane> plane;    //全飛行機を格納するArrayList
 private JLabel label;                 //クリック座標を表示するJLabel
 private int clickmode;                //クリックモードを判断する変数 (1:飛行機選択モード 2:移動方向選択モード)
 private int size;                     //画面サイズ
-private ArrayList<ArrayList<Block>> block;
+private int block[][];
+private int c=0;
 
 
 
@@ -507,8 +522,8 @@ PlanePanel(int s){                   //sに以下、Airfieldのサイズを渡�
                 plane.add(new B());
                 plane.add(new A());
         }
-        block = new ArrayList<Block>;
-        block={{200,100,20},{300,400,20}};
+
+
 
         size = s;                                   //画面の大きさを保存
         this.addMouseListener(this);                //マウスリスナーに登録
@@ -572,11 +587,13 @@ public void paintComponent(Graphics g) {
         super.paintComponent(g);
         //Airplane b = new Airplane();
         //int block[][] = b.addblock();
-        g.fillOval(100,100,20,20);
-        for(int i=0;i<block[0].length;i++){
+
+        int[][] block = new int[][]{{200,100,20},{300,400,20}};
+        for(int i=0;i<block.length;i++){
           int bx = block[i][0];
           int by =block[i][1];
           int bsize = block[i][2];
+          //g.fillOval(100*i,100,20,20);
           g.fillOval(bx,by,bsize,bsize);
         }
         //g.fillRect(200,100,20,20);
@@ -593,35 +610,73 @@ public void paintComponent(Graphics g) {
 
 public void actionPerformed(ActionEvent e){
 boolean coll,bcoll;
-boolean add;
-        for(Airplane f: plane) {
-                f.update(size);
-                add = f.getadd();
-                if(add==false){
-                double r = Math.random();
-                //if(r>0.2){
-                  f.addplane();
-                //}
-              }
-                  for(Airplane g:plane){
+boolean store;
+int block[][];
+int ix,iy;
+ Airplane b = new Airplane();
+ block = b.addblock();
 
-                  f.updatewarn(g);
-                  f.coll(g);
+ Airplane st = new Airplane();
+ ix = st.getIX();
+ iy = st.getIY();
+
+
+        for(Airplane f: plane) {
+
+                f.update(size);
+                if(c==20){
+                  double r = Math.random();
+                  c=0;
+                  if(f.getY()==iy){
+                    if(r>0.7){
+                  f.addplane();
+
+                }
+              }
+              }else{
+                if(f.getY()==iy){
+                f.storeplane();
+              }
+              }
+
+
+              for(int i=0;i<block.length;i++){
+                f.coll(block, i);
+              bcoll = f.getbcoll();
+              if(bcoll){
+                label.setText("warning");
+                f.storeplane();
+            //    g.removeplane();
+                //f.endgame();
+                //g.endgame();
+              }else{
+                label.setText(String.valueOf(c));
+              }
+            }
+                /*  for(Airplane g:plane){
+                    store = g.store();
+                    if(store==false){
+                  g.updatewarn(f);
+                  //g.coll(block);
                   coll = g.getcoll();
-                  bcoll = g.getbcoll();
-                  if(bcoll){
-                    label.setText("warning");
+                  //bcoll = g.getbcoll();
+                  //if(bcoll){
+                    //label.setText("warning");
+                    //g.storeplane();
                 //    g.removeplane();
                     //f.endgame();
                     //g.endgame();
-                  }else if(coll){
+                  //}else
+                   if(coll){
                     label.setText("Failure");
                   }else{
                     label.setText("noun");
                   }
                 }
+              }*/
         }
         this.repaint();
+        c++;
       }
 }
 //..................↑PlanePanelクラス.........................//
