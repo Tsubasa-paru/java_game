@@ -18,8 +18,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 /*
-//背景画像を保持するクラス
-class Background extends Component {
+   //背景画像を保持するクラス
+   class Background extends Component {
     BufferedImage bufferedImage = null;//[101]
     Background() {//JPEG読み込みその画像を持つbufferedImageオブジェクト作成
         try {
@@ -42,9 +42,9 @@ class Background extends Component {
     }
     void writeImage() {//空のwriteImageメソッド
     }
-}
-//障害物の描画
-class PaintImageComponent extends Background {//[200]
+   }
+   //障害物の描画
+   class PaintImageComponent extends Background {//[200]
     int r = 255;
     int g = 0;
     int b = 0;
@@ -187,9 +187,9 @@ class PaintImageComponent extends Background {//[200]
         graphics2D27.fillOval(100, 830, 50, 50);//(左上x,左上y,幅,高さ)
         graphics.drawImage(bufferedImage, 0, 0, null);//画像表示
     }
-}
-//自機の描画
-class Plane extends Component {
+   }
+   //自機の描画
+   class Plane extends Component {
     BufferedImage bufferedImage = null;//[101]
     Plane() {//JPEG読み込みその画像を持つbufferedImageオブジェクト作成
         try {
@@ -212,10 +212,10 @@ class Plane extends Component {
     }
     void writeImage() {//空のwriteImageメソッド
     }
-}
+   }
 
-//滑走路の描画
-class End extends Component {
+   //滑走路の描画
+   class End extends Component {
     BufferedImage bufferedImage = null;//[101]
     End() {//JPEG読み込みその画像を持つbufferedImageオブジェクト作成
         try {
@@ -227,9 +227,9 @@ class End extends Component {
     public void paint(Graphics graphics) {
         graphics.drawImage(bufferedImage, 0, 0, null);//画像表示
     }
-}
+   }
 
-class Pane extends JLayeredPane {
+   class Pane extends JLayeredPane {
     Plane plane = null;//component型
     Background background = null;
     End end = null;
@@ -250,10 +250,10 @@ class Pane extends JLayeredPane {
          add(end);
          setLayer(end,PALETTE_LAYER, 0);
     }
-}
+   }
 
 
-class View2 extends JFrame implements Observer {
+   class View2 extends JFrame implements Observer {
     private Pane pane;
     View2() {
         pane = new Pane();
@@ -276,9 +276,9 @@ class View2 extends JFrame implements Observer {
     public static void main(String[] args) {
         new View2();
     }
-}
+   }
 
-*/
+ */
 
 
 //.....↓Airplaneクラス(飛行機が持つの性質) ......//
@@ -288,7 +288,7 @@ protected double kakudo;                          //進行方向に傾けるた�
 protected boolean flag;                           //クリックモード1で選択されたかを判定する変数
 protected boolean coll;
 protected boolean add;
-protected boolean bcoll;
+//protected boolean bcoll;
 private ArrayList<Airplane> plane;
 protected int ix=100;
 protected int iy=0;
@@ -326,104 +326,104 @@ void updatev(int a,int b){                        //(2:移動方向選択モー�
 }
 
 void addplane(){
-  x = (int)(Math.random()*400);                                   //初期座標と初期速度を設定
-  y = (int)(Math.random()*400);
-  vx = (int)(Math.random()*5);
-  vy = (int)(Math.random()*5);
-  kakudo = Math.atan(-1*(float)vy/(float)vx);
+        x = (int)(Math.random()*400);                             //初期座標と初期速度を設定
+        y = (int)(Math.random()*400);
+        vx = (int)(Math.random()*5);
+        vy = (int)(Math.random()*5);
+        kakudo = Math.atan(-1*(float)vy/(float)vx);
 }
 
 void storeplane(){
-  vx = 1;
-  vy = 0;
-  x = ix;
-  y = iy;
+        vx = 1;
+        vy = 0;
+        x = ix;
+        y = iy;
 }
 
 boolean store(){
-  if(y==iy){
-    return true;
-  }else{
-    return false;
-  }
+        if(y==iy) {
+                return true;
+        }else{
+                return false;
+        }
 }
 
 void updatewarn(Airplane g){
-      int x2 = g.getX();
-      int y2 = g.getY();
-      int size2 = g.getsize();
+        int x2 = g.getX();
+        int y2 = g.getY();
+        int size2 = g.getsize();
 
-  double dist = Math.sqrt(Math.pow(ex-x2-size2/2,2)+Math.pow(ey-y2-size2/2,2));
-  if(x != x2){
-  if(dist<size+size2){
-    if(coll==false){
-      changecoll();
-    }
-  }else{
-    resetcoll();
-  }
-  }
-  }
+        double dist = Math.sqrt(Math.pow(ex-x2-size2/2,2)+Math.pow(ey-y2-size2/2,2));
+        if(x != x2) {
+                if(dist<size+size2) {
+                        if(coll==false) {
+                                changecoll();
+                        }
+                }else{
+                        resetcoll();
+                }
+        }
+}
 
-  void coll(int b[][],int i){
-    //int b[][] = addblock();
-    //for(int i=0; i<b.length; i++){
-    int bx = b[i][0];
-    int by = b[i][1];
-    int bsize = b[i][2];
+/*void coll(int b[][],int i){
+   //int b[][] = addblock();
+   //for(int i=0; i<b.length; i++){
+   int bx = b[i][0];
+   int by = b[i][1];
+   int bsize = b[i][2];
 
-    double dist = Math.sqrt(Math.pow(ex-bx-bsize/2,2)+Math.pow(ey-by-bsize/2,2));
-    if(dist<size/3+bsize/2){
-      if(bcoll==false){
-        changebcoll();
-    }
-  }else{
-      resetbcoll();
-    }
-  //}
+   double dist = Math.sqrt(Math.pow(ex-bx-bsize/2,2)+Math.pow(ey-by-bsize/2,2));
+   if(dist<size/3+bsize/2){
+    if(bcoll==false){
+      changebcoll();
+   }
+   }else{
+    resetbcoll();
+   }
+   //}
 
-  }
+   }*/
 
-  int[][] addblock(){
-    int block[][]={{200,100,20},{300,400,20},{500,500,40}};
-    return block;
-  }
+/*int[][] addblock(){
+        int block[][]={{200,100,20},{300,400,20},{500,500,40}};
+        return block;
+}*/
 
 int getIX(){
-  return ix;
+        return ix;
 }
 int getIY(){
-  return iy;
+        return iy;
 }
 
-  boolean getbcoll(){
-    return bcoll;
-  }
+/*boolean getbcoll(){
+        return bcoll;
+}
 
-  void changebcoll(){
-   bcoll =! bcoll;
-  }
+void changebcoll(){
+        bcoll =!bcoll;
+}
 
-  void resetbcoll(){
-    bcoll = false;
-  }
+void resetbcoll(){
+        bcoll = false;
+}*/
 
-  boolean getcoll(){
-    return coll;
-  }
-  void changecoll(){
-    coll = !coll;
-  }
-  void resetcoll(){
-    coll = false;
-  }
+boolean getcoll(){
+        return coll;
+}
+void changecoll(){
+        coll = !coll;
+}
+void resetcoll(){
+        coll = false;
+}
 
-  boolean getadd(){
-    return add;
-  }
+boolean getadd(){
+        return add;
+}
 
 void changeadd(){
-  add = true;
+        add = true;
 }
 
 void draw(Graphics g) {
@@ -437,17 +437,41 @@ int getY(){
 int getsize(){
         return size;
 }
-    public void setX(int s){
-	this.x=s;
-    }
-    public void setY(int s){
-	this.y=s;
-    }
+public void setX(int s){
+        this.x=s;
+}
+public void setY(int s){
+        this.y=s;
+}
 boolean getflag(){
         return flag;
 }
 void changeflag(){
         flag = !flag;
+}
+}
+
+class Block extends Airplane {
+protected boolean coll;
+
+void coll(int b[][],int i){
+        int bx = b[i][0];
+        int by = b[i][1];
+        int bsize = b[i][2];
+
+        double dist = Math.sqrt(Math.pow(ex-bx-bsize/2,2)+Math.pow(ey-by-bsize/2,2));
+        if(dist<size/3+bsize/2) {
+                if(coll==false) {
+                        changecoll();
+                }
+        }else{
+                resetcoll();
+        }
+}
+
+int[][] addblock(){
+        int block[][]={{200,100,20},{300,400,20},{500,500,40}};
+        return block;
 }
 }
 
@@ -543,7 +567,7 @@ PlanePanel(int s){                   //sに以下、Airfieldのサイズを渡�
 
 
 
-    //..........↓マウスクリック時の操作..............//
+//..........↓マウスクリック時の操作..............//
 
 public void mouseReleased(MouseEvent e){
         Point point = e.getPoint();                   //クリック位置を取得
@@ -587,212 +611,79 @@ public void mouseClicked(MouseEvent e){
 }
 public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        //Airplane b = new Airplane();
-        //int block[][] = b.addblock();
-        Airplane b = new Airplane();
+        Block b = new Block();
         block = b.addblock();
-        //int[][] block = new int[][]{{200,100,20},{300,400,20}};
-        for(int i=0;i<block.length;i++){
-          int bx = block[i][0];
-          int by =block[i][1];
-          int bsize = block[i][2];
-          //g.fillOval(100*i,100,20,20);
-          g.fillOval(bx,by,bsize,bsize);
+        for(int i=0; i<block.length; i++) {
+                int bx = block[i][0];
+                int by =block[i][1];
+                int bsize = block[i][2];
+                g.fillOval(bx,by,bsize,bsize);
         }
-        //g.fillRect(200,100,20,20);
-        //g.fillRect(300,400,20,20);
-        //int block[][];
-        //block = new int[2][3];
-        //int block[][]={{200,100,20},{300,400,20}};
-	for(Airplane f: plane){
-	    f.draw(g);
-    }
-	//plane.forEach(i -> label.setText(String.valueOf(i)));
+        for(Airplane f: plane) {
+                f.draw(g);
+        }
 }
 
 
 public void actionPerformed(ActionEvent e){
-boolean coll,bcoll;
-boolean store;
-int block[][];
-int ix,iy;//,x,y,size;
-//int p[][];
- Airplane b = new Airplane();
- block = b.addblock();
+        boolean coll,bcoll;
+        boolean store;
+        int block[][];
+        int ix,iy;
 
- Airplane st = new Airplane();
- ix = st.getIX();
- iy = st.getIY();
+        Block b = new Block();
+        block = b.addblock();
 
-//p = new int[NUM_plane][3];
+        Airplane st = new Airplane();
+        ix = st.getIX();
+        iy = st.getIY();
 
         for(Airplane f: plane) {
-            //x=f.getX();
-            //y=f.getY();
-            //size = f.getsize();
-            //for(int i=0;i<NUM_plane;i++){
-            //  p[i][0]=x;
-            //  p[i][1]=y;
-            //  p[i][2]=size;
-            //}
                 f.update(size);
-                if(c==20){
-                  double r = Math.random();
-                  c=0;
-                  if(f.getY()==iy){
-                    if(r>0){
-                  f.addplane();
-                  //NUM_plane++;
+                if(c==20) {
+                        double r = Math.random();
+                        c=0;
+                        if(f.getY()==iy) {
+                                if(r>0) {
+                                        f.addplane();
+                                        //NUM_plane++;
+                                }
+                        }
+                }else{
+                        if(f.getY()==iy) {
+                                f.storeplane();
+                        }
                 }
-              }
-              }else{
-                if(f.getY()==iy){
-                f.storeplane();
-              }
-              }
 
-
-              for(int i=0;i<block.length;i++){
-                f.coll(block, i);
-              bcoll = f.getbcoll();
-              if(bcoll){
-                label.setText("warning");
-                f.storeplane();
-                //NUM_plane--;
-            //    g.removeplane();
-                //f.endgame();
-                //g.endgame();
-              }else{
-                label.setText(String.valueOf(c));
-              }
-            }
-
-          /*  for(int i=0;i<NUM_plane;i++){
-              for(int j=i+1;j<NUM_plane;j++){
-                int dx=p[i][0]+p[i][2]-p[j][0]-p[j][2];
-                int dy=p[i][1]+p[i][2]-p[j][1]-p[j][2];
-                double dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-                if(dist<p[i][2]+p[j][2]){
-                label.setText("Collision");
-              }
-            }
-          }*/
-                /*  for(Airplane g:plane){
-                    store = g.store();
-                    if(store==false){
-                  g.updatewarn(f);
-                  //g.coll(block);
-                  coll = g.getcoll();
-                  //bcoll = g.getbcoll();
-                  //if(bcoll){
-                    //label.setText("warning");
-                    //g.storeplane();
-                //    g.removeplane();
-                    //f.endgame();
-                    //g.endgame();
-                  //}else
-                   if(coll){
-                    label.setText("Collision");
-                  }
+                for(int i=0; i<block.length; i++) {
+                        f.coll(block, i);
+                        coll = f.getcoll();
+                        if(bcoll) {
+                                label.setText("warning");
+                                f.storeplane();
+                                //NUM_plane--;
+                        }else{
+                                label.setText(String.valueOf(c));
+                        }
                 }
-              }*/
         }
         this.repaint();
         c++;
-      }
+}
 }
 //..................↑PlanePanelクラス.........................//
 
-
-
 class Airfield extends JFrame {
-    private int size;                                           //画面のサイズ
-    public Airfield(){
-	     size = 600;
+private int size;                                               //画面のサイズ
+public Airfield(){
+        size = 600;
         this.setTitle("Random Frame");
         this.setSize(size,size);
         this.add(new PlanePanel(size));                    //RandomPnelをAirfieldに追加
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-    }
-    public static void main(String argv[]) {
-        new Airfield();
-    }
 }
-
-/*class Collision extends Airplane{//到着判定
-    private int x, y, width, height;
-    private Image image;
-    private Airfield panel;
-    private static final Point Strage = new Point(-20,-20);
-    private boolean coll;
-    private int NUM =2;
-
-    public Collision(Airfield field){
-	x = Strage.x;
-	y = Strage.y;
-	this.panel=panel;
-	loadImage();
-    }
-
-    public Point getPos(){
-	return new Point(x,y);
-    }
-
-    public void setPos(int x, int y){
-	this.x=x;
-	this.y=y;
-    }
-
-    public int getHeight(){
-	return height;
-    }
-
-    public int getWidth(){
-	return width;
-    }
-
-    public void store(){
-	x=Strage.x;
-	y=Strage.y;
-    }
-
-    public boolean InStrage(){
-	if(x==Strage.x && y==Strage.x)
-	    return true;
-	return false;
-    }
-
-    public void draw(Graphics g){
-	g.drawImage(image,x,y,null);
-    }
-
-    private void loadImage() {
-        ImageIcon icon = new ImageIcon(getClass().getResource("a.png"));
-        image = icon.getImage();
-        width = image.getWidth(panel);
-        height = image.getHeight(panel);
-    }
-
-
-    public boolean getPlane(Collision plane){
-        Rectangle rectplane1 = new Rectangle(x,y,width,height);
-        Point pos = plane.getPos();
-        Rectangle rectplane2 = new Rectangle(pos.x,pos.y,plane.getWidth(),plane.getHeight());
-        return rectplane1.intersects(rectplane2);
-    }
-    public void restore(){
-	setPos(Strage.x,Strage.y);
-    }
-    /*  private void CollisionDecision(){
-	ImageIcon[] p = {i1,i2};
-	for(int i=0;i<NUM;i++){
-	    for(int j=i+1;j<NUM;j++){
-		if(p[i].getPlane(p[j])){
-		    p[i].restore();
-		    p[j].restore();
-		}
-	    }
-	}
-	}
-}*/
+public static void main(String argv[]) {
+        new Airfield();
+}
+}
