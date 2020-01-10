@@ -283,6 +283,7 @@ class View2 extends JFrame implements Observer {
 
 //.....↓Airplaneクラス(飛行機が持つの性質) ......//
 class Airplane {
+protected int a;
 protected int x,y,vx,vy,ex,ey,size;               //ex,eyは画像の中心座標 x,yは左上の座標 sizeは大きさ
 protected double kakudo;                          //進行方向に傾けるための角度
 protected boolean flag;                           //クリックモード1で選択されたかを判定する変数
